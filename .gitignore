@@ -1,0 +1,21 @@
+# IDE
+.idea/
+.vscode/
+
+# Local environment and secrets
+.env
+.env.local
+
+# Build artifacts
+shortlink
+shortlink.exe
+*.exe
+*.test
+*.out
+
+# Local benchmark output
+bench-results.csv
+scripts/bench-results.csv
+
+# Logs
+*.log

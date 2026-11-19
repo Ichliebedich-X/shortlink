@@ -1,0 +1,8 @@
+.git
+.gitignore
+.idea
+work
+.env
+.env.*
+scripts/bench-results.csv
+*.md
