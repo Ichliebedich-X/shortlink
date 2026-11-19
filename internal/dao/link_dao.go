@@ -55,8 +55,7 @@ func (d *LinkDao) GetByCode(ctx context.Context, code string) (*model.TLink, err
 }
 
 // ListAllCodes 获取所有未删除的短码。
-// 为什么需要这个方法？
-// 因为布隆过滤器是存在 Redis 内存里的，如果 Redis 重启或者清理了数据，
+// 布隆过滤器是存在 Redis 内存里的，如果 Redis 重启或者清理了数据，
 // 过滤器就空了。服务启动时必须查一次数据库，把所有历史短码重新灌入过滤器，
 // 否则所有老短链都会被误判为“不存在”直接 404。
 func (d *LinkDao) ListAllCodes(ctx context.Context) ([]string, error) {

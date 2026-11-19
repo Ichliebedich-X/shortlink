@@ -22,7 +22,7 @@ func RequestLogger(logger *slog.Logger) gin.HandlerFunc {
 		c.Set("request_id", reqID)      // 存到上下文里，后面的 Handler 可以拿
 		c.Header("X-Request-ID", reqID) // 塞进响应头，返回给前端，方便前端报错时提供这个ID
 
-		// 3. 放行！让后面的 Handler 去处理业务
+		// 3. 放行让后面的 Handler 去处理业务
 		c.Next()
 
 		// 4. 处理完回来，再看表，算耗时
