@@ -97,7 +97,7 @@ func (h *LinkHandler) CreateLink(c *gin.Context) {
 	// 3. 成功，返回结果
 	response.OK(c, createLinkResp{
 		Code:     code,
-		ShortURL: "http://localhost:8080/" + code,
+		ShortURL: "http://" + c.Request.Host + "/" + code,
 	})
 }
 

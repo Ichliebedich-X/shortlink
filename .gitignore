@@ -13,6 +13,9 @@ shortlink.exe
 *.test
 *.out
 
+# scripts
+start.ps1
+
 # Local benchmark output
 bench-results.csv
 scripts/bench-results.csv

@@ -81,6 +81,7 @@ func TestCreateLink(t *testing.T) {
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest(http.MethodPost, "/api/v1/links", strings.NewReader(c.body))
+			req.Host = "localhost:8081"
 			req.Header.Set("Content-Type", "application/json")
 			router.ServeHTTP(w, req)
 
@@ -105,7 +106,7 @@ func TestCreateLink(t *testing.T) {
 				if resp.Data.Code != c.fakeCode {
 					t.Fatalf("data.code = %q, want %q", resp.Data.Code, c.fakeCode)
 				}
-				wantURL := "http://localhost:8080/" + c.fakeCode
+				wantURL := "http://localhost:8081/" + c.fakeCode
 				if resp.Data.ShortURL != wantURL {
 					t.Fatalf("data.short_url = %q, want %q", resp.Data.ShortURL, wantURL)
 				}

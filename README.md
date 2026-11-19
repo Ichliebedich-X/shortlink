@@ -160,6 +160,16 @@ dao 只和 MySQL、Redis 打交道。
 
 ## 快速开始
 
+### 端口约定
+
+本地开发与 Docker Compose 使用不同的宿主机端口，可以同时运行：
+
+| 服务 | 本地开发 | Compose 宿主机 | Compose 容器内部 |
+|---|---:|---:|---:|
+| Shortlink App | 8080 | 8081 | 8080 |
+| MySQL | 3306 | 3307 | 3306 |
+| Redis | 6379 | 6380 | 6379 |
+
 ### Docker Compose
 
 第一次运行先把 `.env.example` 复制成 `.env`，并修改里面的数据库密码：
@@ -172,23 +182,27 @@ Windows PowerShell 可以用 `Copy-Item .env.example .env`。
 
 ```bash
 docker compose up -d --build
-curl http://localhost:8080/health
+curl http://localhost:8081/health
 ```
 
 首次启动会：
 
 1. 启动 MySQL（宿主机 3307，避免和本机 3306 冲突），执行 `schema.sql` 建表；
-2. 启动 Redis（宿主机 6380，避免和本机 6379 冲突）
-3. 构建并启动 Go 服务（8080）；
+2. 启动 Redis（宿主机 6380，避免和本机 6379 冲突）；
+3. 构建并启动 Go 服务（宿主机 8081，容器内仍监听 8080）；
 4. 服务启动时从 MySQL 全量重建布隆过滤器，并校准 Redis 发号器。
 
 ### 本地开发
 
-需要本机 MySQL（3306）和 Redis（6379）：
+先启动宿主机上的 MySQL 8 和 Redis 7，端口分别为 `3306` 和 `6379`，
+再在项目目录运行服务：
 
 ```bash
 go run .
 ```
+
+本地服务监听 `http://localhost:8080`，默认连接
+`127.0.0.1:3306` 和 `127.0.0.1:6379`。
 
 通过环境变量覆盖连接串：
 
@@ -196,6 +210,9 @@ go run .
 MYSQL_DSN="root:<password>@tcp(127.0.0.1:3306)/shortlink?charset=utf8mb4&parseTime=True&loc=Local"
 REDIS_ADDR="127.0.0.1:6379"
 ```
+
+本地 app 和 Compose app 可以同时运行：本地访问 `8080`，容器访问 `8081`。
+创建短链返回的 `short_url` 会使用当前请求的 Host，因此会自动带上对应端口。
 
 ## API
 
@@ -283,6 +300,9 @@ BLOOM_FPR=1 go test ./pkg/bloom -run TestFalsePositiveRate -v
 
 # 集成冒烟（需要服务已启动）
 .\scripts\smoke.ps1
+
+# Compose 部署的冒烟检查
+.\scripts\smoke.ps1 -BaseUrl http://127.0.0.1:8081
 
 # 压测并追加到 CSV
 .\scripts\bench.ps1 -Scenario cache -Concurrency 100 -Duration 30s
